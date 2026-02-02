@@ -1,7 +1,10 @@
 import logging
 import sys
 
-LOG_FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+LOG_FORMAT = (
+    "%(asctime)s | %(levelname)s | %(name)s | %(message)s | "
+    "method=%(method)s | url=%(url)s | status=%(status_code)s | duration_ms=%(duration_ms)s"
+)
 
 
 def setup_logging(level: int = logging.INFO):

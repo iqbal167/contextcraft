@@ -13,8 +13,8 @@ async def request_logging_middleware(request: Request, call_next):
     if request.url.path in EXCLUDE_PATHS:
         return await call_next(request)
 
-    # Use perf_counter for high precision timing
     start_time = time.perf_counter()
+    # default: assume server error
     status_code = 500
 
     try:
@@ -22,14 +22,9 @@ async def request_logging_middleware(request: Request, call_next):
         status_code = response.status_code
         return response
 
-    except Exception:
-        logger.exception(
-            "request failed with exception",
-            extra={"method": request.method, "url": str(request.url)},
-        )
-        raise
     finally:
         duration = (time.perf_counter() - start_time) * 1000
+
         log_extra = {
             "method": request.method,
             "url": str(request.url),
