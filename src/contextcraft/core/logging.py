@@ -10,3 +10,7 @@ def setup_logging(level: int = logging.INFO):
         format=LOG_FORMAT,
         handlers=[logging.StreamHandler(sys.stdout)],
     )
+
+    logging.getLogger("uvicorn.access").disabled = True
+
+    logging.getLogger("uvicorn.error").setLevel(logging.WARNING)
