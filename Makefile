@@ -4,6 +4,9 @@ format:
 	uv run ruff check --select I --fix .
 	uv run ruff format .
 
+lint:
+	uv run ruff check .
+
 dev:
 	uv run fastapi dev src/contextcraft/main.py
 

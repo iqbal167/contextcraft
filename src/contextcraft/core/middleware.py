@@ -1,5 +1,6 @@
 import logging
 import time
+import uuid
 
 from fastapi import Request
 
@@ -17,15 +18,21 @@ async def request_logging_middleware(request: Request, call_next):
     # default: assume server error
     status_code = 500
 
+    correlation_id = request.headers.get("X-Correlation-ID") or str(uuid.uuid4())
+    request.state.correlation_id = correlation_id
+
     try:
         response = await call_next(request)
         status_code = response.status_code
+
+        response.headers["X-Correlation-ID"] = correlation_id
         return response
 
     finally:
         duration = (time.perf_counter() - start_time) * 1000
 
         log_extra = {
+            "correlation_id": correlation_id,
             "method": request.method,
             "url": str(request.url),
             "status_code": status_code,

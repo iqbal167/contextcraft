@@ -10,9 +10,12 @@ async def http_exception_handler(
     request: Request,
     exc: HTTPException,
 ):
+    correlation_id = getattr(request.state, "correlation_id", "unknown")
+
     logger.warning(
         "http exception",
         extra={
+            "correlation_id": correlation_id,
             "method": request.method,
             "url": str(request.url),
             "status_code": exc.status_code,
@@ -27,6 +30,7 @@ async def http_exception_handler(
                 "message": exc.detail,
             }
         },
+        headers={"X-Correlation-ID": correlation_id},
     )
 
 
@@ -34,13 +38,17 @@ async def unhandled_exception_handler(
     request: Request,
     exc: Exception,
 ):
+    correlation_id = getattr(request.state, "correlation_id", "unknown")
+
     logger.exception(
         "unhandled exception",
         extra={
+            "correlation_id": correlation_id,
             "method": request.method,
             "url": str(request.url),
             "exception_type": type(exc).__name__,
         },
+        headers={"X-Correlation-ID": correlation_id},
     )
 
     return JSONResponse(
