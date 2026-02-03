@@ -48,7 +48,6 @@ async def unhandled_exception_handler(
             "url": str(request.url),
             "exception_type": type(exc).__name__,
         },
-        headers={"X-Correlation-ID": correlation_id},
     )
 
     return JSONResponse(
@@ -59,4 +58,5 @@ async def unhandled_exception_handler(
                 "message": "Internal Server Error",
             }
         },
+        headers={"X-Correlation-ID": correlation_id},
     )
